@@ -1,3 +1,35 @@
+# Targets:
+#   'all' which builds 'lib'
+#   'lib' or 'library' builds the static and shared libraries
+#   'lib.a' or 'static_library' builds only the static library
+#   'lib.so' or 'shared_library' builds only the shared library
+#   'clean' removes intermediate files
+#   'distclean' removes intermediates and outputs
+#   'install' copies the headers and outputs to $(SYSINC) ('/usr/include' by default) and $(SYSLIB) ('/usr/lib' by default)
+#   'uninstall' removes the headers and outputs from $(SYSINC) and $(SYSLIB)
+
+# Options and vars:
+#   'CROSS' sets the Makefile up for cross-compiling; valid values are unset and 'win32' (unset by default)
+#   'DEBUG' enables debug mode if set to 'y' (unset by default)
+#   'ASAN' enables the address sanitizer if set to 'y' (unset by default)
+#   'O' holds the optimization level to use (default is '2' in release and 'g' in debug)
+#   'USESTDTHREAD' enables the usage of C11 threads instead of pthreads
+#   'USEWINPTHREAD' enables the usage of winpthreads instead of win32 threads when compiling for windows
+#   'SRCDIR' holds the path to where the sources are
+#   'OBJDIR' holds the path to where the object files are to be written
+#   'OUTDIR' holds the paht to where the output files are to be written
+#   'BIN' holds the base name to give to the output files
+#   'CC' holds the name of the C compiler (defaults to gcc)
+#   'LD' holds the name of the linker (defaults to $(CC))
+#   'AR' holds the name of the archiver (defaults to ar)
+#   'TOOLCHAIN' holds a prefix to add to all the tools (unset by default)
+#   'CFLAGS' holds the flags to pass to the C compiler; use +=
+#   'CPPFLAGS' holds the flags to pass to the C preprocessor; use +=
+#   'LDFLAGS' holds the flags to pass to the linker; use +=
+#   'LDLIBS' holds the library flags to pass to the linker; use +=
+#   'SYSINC' holds the dir to install headers to
+#   'SYSLIB' holds the dir to install libraries to
+
 SRCDIR := src/pschsl
 OBJDIR := obj/pschsl
 OUTDIR := .
@@ -22,11 +54,9 @@ endif
 CC ?= gcc
 LD := $(CC)
 AR := ar
-STRIP ?= strip
 _CC := $(TOOLCHAIN)$(CC)
 _LD := $(TOOLCHAIN)$(LD)
 _AR := $(TOOLCHAIN)$(AR)
-_STRIP := $(TOOLCHAIN)$(STRIP)
 
 CFLAGS += -Wall -Wextra -Wuninitialized -Wundef
 CPPFLAGS += -D_DEFAULT_SOURCE -D_GNU_SOURCE
@@ -117,7 +147,6 @@ distclean: clean
 
 SYSINC := /usr/include
 SYSLIB := /usr/lib
-SYSBIN := /usr/bin
 
 install:
 	@echo Installing headers...; mkdir '$(SYSINC)/pschsl'; cp -rf '$(SRCDIR)'/*.h '$(SYSINC)/pschsl'

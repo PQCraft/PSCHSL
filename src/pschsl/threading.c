@@ -26,9 +26,9 @@ static void* threadwrapper(void* t) {
         #ifndef PSCHSL_THREADING_USESTDTHREAD
             #if defined(__GLIBC__)
                 pthread_setname_np(((thread_t*)t)->thread, ((thread_t*)t)->name);
-            #elif PLATFORM == PLAT_NETBSD
+            #elif defined(__NetBSD__)
                 pthread_setname_np(((thread_t*)t)->thread, "%s", ((thread_t*)t)->name);
-            #elif PLATFORM == PLAT_FREEBSD || PLATFORM == PLAT_OPENBSD
+            #elif defined(__FreeBSD__) || defined(__OpenBSD__)
                 pthread_set_name_np(((thread_t*)t)->thread, ((thread_t*)t)->name);
             #endif
         #endif
