@@ -10,13 +10,18 @@
 
 #include <stddef.h>
 
-//// ---------------------------- ////
-//// ----- STATELESS THINGS ----- ////
-//// ---------------------------- ////
+//// ------------------- ////
+//// ----- GENERAL ----- ////
+//// ------------------- ////
 
-#define PSCHSL_VERSION 2025082100
+// Header version
+#define PSCHSL_VER_MAJOR 1
+#define PSCHSL_VER_MINOR 0
+#define PSCHSL_VER_PATCH 0
 
-unsigned PSCHSL_GetVersion(void);
+// Binary version
+//   - Returns an always-valid pointer to an array of 3 const unsigned
+const unsigned (*PSCHSL_GetVersion(void))[3];
 
 //// ----------------------- ////
 //// ----- I/O CONTEXT ----- ////
@@ -65,6 +70,10 @@ struct PSCHSL* PSCHSL_Ctx_GetState(struct PSCHSL_Ctx*);
 //// ------------------- ////
 //// ----- REQUEST ----- ////
 //// ------------------- ////
+
+// Return the request method
+//   - On success, returns a string that is valid until the callback returns, or NULL on failure
+const char* PSCHSL_Rqst_GetMethod(struct PSCHSL_Ctx*);
 
 // Return the target given in the method parsed as a URI
 //   - On success, returns a string that is valid until the callback returns, or NULL on failure
@@ -180,11 +189,13 @@ int PSCHSL_IsStopRqstd(struct PSCHSL*);
 int PSCHSL_SetOpt(struct PSCHSL*, enum PSCHSL_Opt, ...);
 
 // Bind a handler callback to a request method
+//   - If method is NULL, set the fallback callback (for this callback, the status will be set to 501 "Not implemented"
+//     by default)
 //   - Returns non-zero for success, zero for failure
-int PSCHSL_SetRqstHandler(struct PSCHSL*, const char* method, PSCHSL_Ctx_Callback cb, void* userdata);
+int PSCHSL_SetMethodHandler(struct PSCHSL*, const char* method, PSCHSL_Ctx_Callback cb, void* userdata);
 // Unbind a handler from a request method
 //   - If delopt is non-zero, also reset the options set with DEFAULTRQSTMOPT
-void PSCHSL_DelRqstHandler(struct PSCHSL*, const char* method, int delopt);
+void PSCHSL_DelMethodHandler(struct PSCHSL*, const char* method, int delopt);
 
 //// ------------------------- ////
 //// ----- LEGACY COMPAT ----- ////
